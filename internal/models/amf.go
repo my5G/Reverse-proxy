@@ -6,21 +6,15 @@ const Inactive = 0x00
 const Active = 0x01
 
 type Amf struct {
-	id      int
 	Name    string `json:"name"`
 	AmfIp   string `json:"ip"`
 	AmfPort int    `json:"port"`
 	State   int    `json:"state"`
 	N2Amf   *sctp.SCTPConn
-	N2Gnb   *sctp.SCTPConn
 }
 
 func (amf *Amf) getName() string {
 	return amf.Name
-}
-
-func (amf *Amf) getId() int {
-	return amf.id
 }
 
 func (amf *Amf) getAmfIp() string {
