@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func InitConn(ipLocal string, portLocal int, ipRemote string, portRemote int) {
+func InitConn(ipLocal string, portLocal int, ipRemote string, portRemote int) *sctp.SCTPConn {
 
 	local := fmt.Sprintf("%s:%d", ipLocal, portLocal)
 	remote := fmt.Sprintf("%s:%d", ipRemote, portRemote)
@@ -35,6 +35,8 @@ func InitConn(ipLocal string, portLocal int, ipRemote string, portRemote int) {
 	conn.SubscribeEvents(sctp.SCTP_EVENT_DATA_IO)
 
 	go amfListen(conn)
+
+	return conn
 }
 
 func amfListen(conn *sctp.SCTPConn) {

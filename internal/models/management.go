@@ -1,15 +1,19 @@
 package models
 
 type Management struct {
+	Ip        string
+	Port      int
 	amfList   [20]Amf
 	round     int
 	amfLength int
 }
 
-func InitMgmt() *Management {
+func InitMgmt(ip string, port int) *Management {
 	mgmt := &Management{}
 	mgmt.round = 0
 	mgmt.amfLength = 0
+	mgmt.Ip = ip
+	mgmt.Port = port
 	return mgmt
 }
 

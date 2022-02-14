@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Reverse-proxy/internal/models"
+	"Reverse-proxy/internal/sctp"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -18,6 +19,7 @@ func CreateAmf(mgmt *models.Management) gin.HandlerFunc {
 		}
 
 		// create amf in management in memory
+		amf.N2Amf = sctp.InitConn(mgmt.Ip, mgmt.Port, amf.AmfIp, amf.AmfPort)
 		mgmt.CreateAmf(amf)
 
 		// produto criado com sucesso.

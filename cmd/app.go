@@ -9,7 +9,7 @@ import (
 func main() {
 
 	// init management
-	mgmt := models.InitMgmt()
+	mgmt := models.InitMgmt("127.0.0.1", 9487)
 
 	// init routes
 	router := gin.Default()

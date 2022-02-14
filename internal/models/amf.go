@@ -11,8 +11,8 @@ type Amf struct {
 	AmfIp   string `json:"ip"`
 	AmfPort int    `json:"port"`
 	State   int    `json:"state"`
-	n2Amf   *sctp.SCTPConn
-	n2Gnb   *sctp.SCTPConn
+	N2Amf   *sctp.SCTPConn
+	N2Gnb   *sctp.SCTPConn
 }
 
 func (amf *Amf) getName() string {
@@ -29,22 +29,6 @@ func (amf *Amf) getAmfIp() string {
 
 func (amf *Amf) getAmfPort() int {
 	return amf.AmfPort
-}
-
-func (amf *Amf) getN2Amf() *sctp.SCTPConn {
-	return amf.n2Amf
-}
-
-func (amf *Amf) getN2Gnb() *sctp.SCTPConn {
-	return amf.n2Gnb
-}
-
-func (amf *Amf) setN2Amf(conn *sctp.SCTPConn) {
-	amf.n2Amf = conn
-}
-
-func (amf *Amf) setN2Gnb(conn *sctp.SCTPConn) {
-	amf.n2Gnb = conn
 }
 
 func (amf *Amf) setInactiveAmf() {
