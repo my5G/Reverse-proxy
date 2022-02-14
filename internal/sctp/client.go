@@ -1,15 +1,16 @@
 package sctp
 
 import (
+	"Reverse-proxy/internal/models"
 	"fmt"
 	"github.com/ishidawataru/sctp"
 	"log"
 )
 
-func InitConn(ipLocal string, portLocal int, ipRemote string, portRemote int) *sctp.SCTPConn {
+func InitConn(mgmt *models.Management, amf *models.Amf) *sctp.SCTPConn {
 
-	local := fmt.Sprintf("%s:%d", ipLocal, portLocal)
-	remote := fmt.Sprintf("%s:%d", ipRemote, portRemote)
+	local := fmt.Sprintf("%s:%d", mgmt.Ip, mgmt.Port)
+	remote := fmt.Sprintf("%s:%d", amf.AmfIp, amf.AmfPort)
 
 	localAddr, err := sctp.ResolveSCTPAddr("sctp", local)
 	if err != nil {
@@ -34,12 +35,12 @@ func InitConn(ipLocal string, portLocal int, ipRemote string, portRemote int) *s
 
 	conn.SubscribeEvents(sctp.SCTP_EVENT_DATA_IO)
 
-	go amfListen(conn)
+	go amfListen(conn, amf)
 
 	return conn
 }
 
-func amfListen(conn *sctp.SCTPConn) {
+func amfListen(conn *sctp.SCTPConn, amf *models.Amf) {
 
 	for {
 
@@ -55,5 +56,8 @@ func amfListen(conn *sctp.SCTPConn) {
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
+
+		// send the packets to GNB
+		amf.N2Gnb.Write(forwardData)
 	}
 }

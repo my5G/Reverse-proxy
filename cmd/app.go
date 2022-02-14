@@ -3,6 +3,7 @@ package main
 import (
 	"Reverse-proxy/internal/models"
 	"Reverse-proxy/internal/routes"
+	"Reverse-proxy/internal/sctp"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +18,7 @@ func main() {
 	routes.CreateRouteAmf(rotasV1, mgmt)
 
 	// init sctp server to handle connections
+	sctp.InitServer(mgmt)
 
 	// init http server in
 	router.Run(":8080")

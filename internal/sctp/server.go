@@ -1,14 +1,15 @@
 package sctp
 
 import (
+	"Reverse-proxy/internal/models"
 	"fmt"
 	"github.com/ishidawataru/sctp"
 	"log"
 )
 
-func InitServer(ip string, port int) {
+func InitServer(mgmt *models.Management) {
 
-	address := fmt.Sprintf("%s:%d", ip, port)
+	address := fmt.Sprintf("%s:%d", mgmt.Ip, mgmt.Port)
 
 	ipAddr, err := sctp.ResolveSCTPAddr("sctp", address)
 	if err != nil {
@@ -16,11 +17,11 @@ func InitServer(ip string, port int) {
 	}
 
 	// listen server
-	go listenServer(ipAddr)
+	go listenServer(ipAddr, mgmt)
 
 }
 
-func listenServer(ipAddr *sctp.SCTPAddr) {
+func listenServer(ipAddr *sctp.SCTPAddr, mgmt *models.Management) {
 
 	ln, err := sctp.ListenSCTP("sctp", ipAddr)
 	if err != nil {
@@ -45,12 +46,13 @@ func listenServer(ipAddr *sctp.SCTPAddr) {
 		// handle connection with the remote client
 
 		// select an AMF for the connection -- mapped AMF and GNB
+		amf := mgmt.SelectAmfRb()
 
-		go serverClient(wconn)
+		go serverClient(wconn, amf)
 	}
 }
 
-func serverClient(conn *sctp.SCTPConn) {
+func serverClient(conn *sctp.SCTPConn, amf *models.Amf) {
 
 	for {
 
@@ -66,6 +68,8 @@ func serverClient(conn *sctp.SCTPConn) {
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
-	}
 
+		// send the data to the specific AMF
+		amf.N2Amf.Write(forwardData)
+	}
 }

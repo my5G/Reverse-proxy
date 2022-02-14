@@ -19,10 +19,10 @@ func CreateAmf(mgmt *models.Management) gin.HandlerFunc {
 		}
 
 		// create amf in management in memory
-		amf.N2Amf = sctp.InitConn(mgmt.Ip, mgmt.Port, amf.AmfIp, amf.AmfPort)
+		amf.N2Amf = sctp.InitConn(mgmt, &amf)
 		mgmt.CreateAmf(amf)
 
-		// produto criado com sucesso.
+		// amf creation success
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": amf})
 	}
 
