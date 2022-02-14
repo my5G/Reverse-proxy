@@ -4,7 +4,6 @@ import "github.com/ishidawataru/sctp"
 
 const Inactive = 0x00
 const Active = 0x01
-const Overload = 0x02
 
 type Amf struct {
 	id      int
@@ -54,8 +53,4 @@ func (amf *Amf) setInactiveAmf() {
 
 func (amf *Amf) setActiveAmf() {
 	amf.State = Active
-}
-
-func (amf *Amf) setOverloadAmf() {
-	amf.State = Overload
 }

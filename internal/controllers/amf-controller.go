@@ -6,35 +6,47 @@ import (
 	"net/http"
 )
 
-func CreateAmf(ctx *gin.Context) {
-	var amf models.Amf
+func CreateAmf(mgmt *models.Management) gin.HandlerFunc {
 
-	err := ctx.ShouldBindJSON(&amf)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	return func(ctx *gin.Context) {
+		var amf models.Amf
+
+		err := ctx.ShouldBindJSON(&amf)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// create amf in management in memory
+		mgmt.CreateAmf(amf)
+
+		// produto criado com sucesso.
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": amf})
 	}
-
-	// create amf in management in memory
-
-	// produto criado com sucesso.
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": amf})
 
 }
 
-func UpdateAmf(ctx *gin.Context) {
-	var amf models.Amf
+func UpdateAmfState(mgmt *models.Management) gin.HandlerFunc {
 
-	// id da reserva
-	_ = ctx.Params.ByName("name")
+	return func(ctx *gin.Context) {
+		var amf models.Amf
 
-	// status da reserva.
-	if err := ctx.ShouldBindJSON(&amf); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// id of amf
+		name := ctx.Params.ByName("name")
+
+		// status of amf
+		if err := ctx.ShouldBindJSON(&amf); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+
+		// update amf in management
+		result, err := mgmt.UpdateAmfState(amf, name)
+		if err {
+			// return amf
+			ctx.JSON(http.StatusOK, result)
+		} else {
+			// return failure.
+			ctx.JSON(http.StatusNotFound, result)
+		}
 	}
-
-	// update amf in management
-
-	// return reservations.
-	ctx.JSON(http.StatusOK, amf)
 }
