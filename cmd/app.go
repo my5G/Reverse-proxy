@@ -15,7 +15,7 @@ func main() {
 	cfg := c.GetConf()
 
 	// init management
-	mgmt := models.InitMgmt(cfg.Sctp.Ip, 4000, cfg.Sctp.Port)
+	mgmt := models.InitMgmt(cfg.Sctp.Ip, 3000, cfg.Sctp.Port)
 
 	// init routes
 	router := gin.Default()
