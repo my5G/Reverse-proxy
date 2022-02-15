@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  reverse-proxy:
+    container_name: proxy
+    build:
+      context: .
+    command: ./app
+    volumes:
+      - ./config/config.yaml:/workspace/Reverse-proxy/config/config.yaml
+    networks:
+      privnet:
+        aliases:
+          - proxy.my5g.org
+    ports:
+      - "8080:8080/tcp"
+
+networks:
+  privnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.100.200.0/24
