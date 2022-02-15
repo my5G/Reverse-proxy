@@ -10,7 +10,7 @@ import (
 func main() {
 
 	// init management
-	mgmt := models.InitMgmt("127.0.0.1", 5000, 9488)
+	mgmt := models.InitMgmt("127.0.0.1", 4000, 9488)
 
 	// init routes
 	router := gin.Default()

@@ -52,26 +52,26 @@ func listenServer(ipAddr *sctp.SCTPAddr, mgmt *models.Management) {
 			log.Printf("[GNB][PROXY] Not AMF available")
 		} else {
 			// open SCTP connection with amf
-			amf.N2Amf = InitConn(mgmt, amf)
+			connAmf := InitConn(mgmt, amf)
 
 			// increment the port of client
-			mgmt.PortClient++
+			mgmt.UpdateMgmtPort()
 
 			// handle connections with amf
-			go amfListen(connGnb, amf)
+			go amfListen(connGnb, connAmf)
 
 			// handle connections with proxy reverse
-			go serverSctp(connGnb, amf)
+			go serverSctp(connGnb, connAmf)
 		}
 	}
 }
 
-func serverSctp(conn *sctp.SCTPConn, amf *models.Amf) {
+func serverSctp(connGnb *sctp.SCTPConn, connAmf *sctp.SCTPConn) {
 
 	for {
 
-		buf := make([]byte, 65535+128)
-		n, _, err := conn.SCTPRead(buf)
+		buf := make([]byte, 65535)
+		n, _, err := connGnb.SCTPRead(buf)
 		if err != nil {
 			log.Printf("[GNB] read failed: %v", err)
 			return
@@ -90,13 +90,12 @@ func serverSctp(conn *sctp.SCTPConn, amf *models.Amf) {
 		}
 
 		// send the data to the specific AMF
-		amf.N2Amf.SCTPWrite(forwardData, info)
+		connAmf.SCTPWrite(forwardData, info)
 	}
 }
 
 // code of connection with amf
 func InitConn(mgmt *models.Management, amf *models.Amf) *sctp.SCTPConn {
-
 	local := fmt.Sprintf("%s:%d", mgmt.Ip, mgmt.PortClient)
 	remote := fmt.Sprintf("%s:%d", amf.AmfIp, amf.AmfPort)
 
@@ -126,12 +125,12 @@ func InitConn(mgmt *models.Management, amf *models.Amf) *sctp.SCTPConn {
 	return conn
 }
 
-func amfListen(conn *sctp.SCTPConn, amf *models.Amf) {
+func amfListen(connGnb *sctp.SCTPConn, connAmf *sctp.SCTPConn) {
 
 	for {
 
 		buf := make([]byte, 65535)
-		n, err := amf.N2Amf.Read(buf[:])
+		n, err := connAmf.Read(buf[:])
 		if err != nil {
 			log.Printf("[AMF] read failed: %v", err)
 			return
@@ -144,6 +143,6 @@ func amfListen(conn *sctp.SCTPConn, amf *models.Amf) {
 		copy(forwardData, buf[:n])
 
 		// send the packets to GNB
-		conn.Write(forwardData)
+		connGnb.Write(forwardData)
 	}
 }
