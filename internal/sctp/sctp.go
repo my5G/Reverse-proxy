@@ -101,12 +101,12 @@ func InitConn(mgmt *models.Management, amf *models.Amf) *sctp.SCTPConn {
 
 	localAddr, err := sctp.ResolveSCTPAddr("sctp", local)
 	if err != nil {
-		log.Fatalf("[AMF] Error in Resolve Ip Local for reverse proxy")
+		log.Fatalf("[AMF] Error in Resolve Ip Local for reverse proxy:%v", err)
 	}
 
 	remoteAddr, err := sctp.ResolveSCTPAddr("sctp", remote)
 	if err != nil {
-		log.Fatalf("[AMF] Error in Resolve Ip Remote for reverse proxy")
+		log.Fatalf("[AMF] Error in Resolve Ip Remote for reverse proxy:%v", err)
 	}
 
 	conn, err := sctp.DialSCTPExt(
@@ -115,7 +115,7 @@ func InitConn(mgmt *models.Management, amf *models.Amf) *sctp.SCTPConn {
 		remoteAddr,
 		sctp.InitMsg{NumOstreams: 2, MaxInstreams: 2})
 	if err != nil {
-		log.Fatalf("[AMF] Error in connect to AMF for reverse proxy")
+		log.Fatalf("[AMF] Error in connect to AMF for reverse proxy:%v", err)
 	}
 
 	log.Println("[AMF] AMF connected")
