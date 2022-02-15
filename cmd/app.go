@@ -1,16 +1,21 @@
 package main
 
 import (
+	"Reverse-proxy/config"
 	"Reverse-proxy/internal/models"
 	"Reverse-proxy/internal/routes"
 	"Reverse-proxy/internal/sctp"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	var c config.Config
+
+	cfg := c.GetConf()
 
 	// init management
-	mgmt := models.InitMgmt("127.0.0.1", 4000, 9488)
+	mgmt := models.InitMgmt(cfg.Sctp.Ip, 5000, cfg.Sctp.Port)
 
 	// init routes
 	router := gin.Default()
@@ -20,7 +25,7 @@ func main() {
 	// init sctp server to handle connections
 	sctp.InitServer(mgmt)
 
-	// init http server in
-	router.Run(":8080")
-
+	// init http server
+	addr := fmt.Sprintf("%s:%d", cfg.Http.Ip, cfg.Http.Port)
+	router.Run(addr)
 }
