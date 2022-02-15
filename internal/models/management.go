@@ -1,7 +1,5 @@
 package models
 
-import "sync"
-
 type Management struct {
 	Ip         string
 	PortClient int
@@ -9,7 +7,6 @@ type Management struct {
 	amfList    [20]*Amf
 	round      int
 	amfLength  int
-	Mu         sync.Mutex
 }
 
 func InitMgmt(ip string, portClient int, portServer int) *Management {
@@ -61,7 +58,5 @@ func (mgmt *Management) updateRoundRobin() {
 }
 
 func (mgmt *Management) UpdateMgmtPort() {
-	mgmt.Mu.Lock()
 	mgmt.PortClient++
-	mgmt.Mu.Unlock()
 }
