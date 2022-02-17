@@ -54,9 +54,6 @@ func listenServer(ipAddr *sctp.SCTPAddr, mgmt *models.Management) {
 			// open SCTP connection with amf
 			connAmf := InitConn(mgmt, amf)
 
-			// increment the port of client
-			mgmt.UpdateMgmtPort()
-
 			// handle connections with amf
 			go amfListen(connGnb, connAmf)
 
@@ -74,7 +71,7 @@ func serverSctp(connGnb *sctp.SCTPConn, connAmf *sctp.SCTPConn) {
 		n, _, err := connGnb.SCTPRead(buf)
 		if err != nil {
 			log.Printf("[GNB] read failed: %v", err)
-			return
+			break
 		}
 
 		// handle the read packets
@@ -92,11 +89,15 @@ func serverSctp(connGnb *sctp.SCTPConn, connAmf *sctp.SCTPConn) {
 		// send the data to the specific AMF
 		connAmf.SCTPWrite(forwardData, info)
 	}
+
+	// close the sctps connections with AMF and GNB
+	connGnb.Close()
+	connAmf.Close()
 }
 
 // code of connection with amf
 func InitConn(mgmt *models.Management, amf *models.Amf) *sctp.SCTPConn {
-	local := fmt.Sprintf("%s:%d", mgmt.Ip, mgmt.PortClient)
+	local := fmt.Sprintf("%s:0", mgmt.Ip)
 	remote := fmt.Sprintf("%s:%d", amf.AmfIp, amf.AmfPort)
 
 	localAddr, err := sctp.ResolveSCTPAddr("sctp", local)

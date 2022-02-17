@@ -2,19 +2,17 @@ package models
 
 type Management struct {
 	Ip         string
-	PortClient int
 	PortServer int
 	amfList    [20]*Amf
 	round      int
 	amfLength  int
 }
 
-func InitMgmt(ip string, portClient int, portServer int) *Management {
+func InitMgmt(ip string, portServer int) *Management {
 	mgmt := &Management{}
 	mgmt.round = 0
 	mgmt.amfLength = 0
 	mgmt.Ip = ip
-	mgmt.PortClient = portClient
 	mgmt.PortServer = portServer
 	return mgmt
 }
@@ -55,8 +53,4 @@ func (mgmt *Management) SelectAmfRb() *Amf {
 func (mgmt *Management) updateRoundRobin() {
 	mgmt.round++
 	mgmt.round = mgmt.round % (mgmt.amfLength)
-}
-
-func (mgmt *Management) UpdateMgmtPort() {
-	mgmt.PortClient++
 }
