@@ -23,6 +23,3 @@ If you have questions or comments, please email us: [my5G team](mailto:my5G.init
 
 [https://github.com/my5G/template/blob/main/CONTRIBUTING.md](https://github.com/my5G/template/blob/main/CONTRIBUTING.md)
 
-## License
-
-Apache 2.0
