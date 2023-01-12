@@ -12,7 +12,6 @@
 
 my5G Reverse proxy is a tool that works as Reverse Proxy and Load Balancer between GNB/N3WIF and AMF (5GC).
 
-```
 If you have questions or comments, please email us: [my5G team](mailto:my5G.initiative@gmail.com). 
 
 
